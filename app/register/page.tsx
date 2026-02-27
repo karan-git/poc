@@ -78,7 +78,7 @@ export default function RegisterPage() {
               onChange={(e) => setName(e.target.value)}
               required
               className="w-full rounded-lg bg-card-background px-3 py-4 text-white text-md transition-colors outline-none"
-              placeholder="Dr. Smith"
+              placeholder="Enter name"
             />
           </div>
 
@@ -92,7 +92,7 @@ export default function RegisterPage() {
               onChange={(e) => setEmail(e.target.value)}
               required
               className="w-full rounded-lg bg-card-background px-3 py-4 text-white text-md transition-colors outline-none"
-              placeholder="you@example.com"
+              placeholder="Enter email"
             />
           </div>
 
