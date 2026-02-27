@@ -53,7 +53,7 @@ export default function RegisterPage() {
           <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-[#202123] text-white">
             <Stethoscope size={28} />
           </div>
-          <h1 className="text-2xl font-semibold text-neutral-400">
+          <h1 className="text-2xl font-semibold text-neutral-200">
             Create account
           </h1>
           <p className="mt-1 text-md text-gray-500">
