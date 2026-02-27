@@ -56,7 +56,7 @@ export default function LoginPage() {
           )}
 
           <div>
-            <label className="mb-1.5 block text-md font-medium text-neutral-400">
+            <label className="mb-1.5 block text-md font-medium text-neutral-200">
               Email
             </label>
             <input
@@ -70,7 +70,7 @@ export default function LoginPage() {
           </div>
 
           <div>
-            <label className="mb-1.5 block text-md font-medium text-neutral-400">
+            <label className="mb-1.5 block text-md font-medium text-neutral-200">
               Password
             </label>
             <div className="relative">

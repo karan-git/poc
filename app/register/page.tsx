@@ -69,7 +69,7 @@ export default function RegisterPage() {
           )}
 
           <div>
-            <label className="mb-1.5 block text-md font-medium text-neutral-400">
+            <label className="mb-1.5 block text-md font-medium text-neutral-200">
               Name
             </label>
             <input
@@ -83,7 +83,7 @@ export default function RegisterPage() {
           </div>
 
           <div>
-            <label className="mb-1.5 block text-md font-medium text-neutral-400">
+            <label className="mb-1.5 block text-md font-medium text-neutral-200">
               Email
             </label>
             <input
@@ -97,7 +97,7 @@ export default function RegisterPage() {
           </div>
 
           <div>
-            <label className="mb-1.5 block text-md font-medium text-neutral-400">
+            <label className="mb-1.5 block text-md font-medium text-neutral-200">
               Password
             </label>
             <div className="relative">
@@ -122,7 +122,7 @@ export default function RegisterPage() {
           </div>
 
           <div>
-            <label className="mb-1.5 block text-md font-medium text-neutral-400">
+            <label className="mb-1.5 block text-md font-medium text-neutral-200">
               Role
             </label>
             <div className="flex gap-2">
@@ -132,7 +132,7 @@ export default function RegisterPage() {
                 className={`flex-1 rounded-lg px-3 py-4 text-md font-medium transition-colors cursor-pointer ${
                   role === "PATIENT"
                     ? "bg-card-background text-white"
-                    : "border-gray-300 text-neutral-400 hover:bg-card-background/20"
+                    : "border-gray-300 text-neutral-200 hover:bg-card-background/20"
                 }`}
               >
                 Patient
@@ -143,7 +143,7 @@ export default function RegisterPage() {
                 className={`flex-1 rounded-lg px-3 py-4 text-md font-medium transition-colors cursor-pointer ${
                   role === "DOCTOR"
                     ? "bg-card-background text-white"
-                    : "border-gray-300 text-neutral-400 hover:bg-card-background/20 border-background"
+                    : "border-gray-300 text-neutral-200 hover:bg-card-background/20 border-background"
                 }`}
               >
                 Doctor
@@ -153,7 +153,7 @@ export default function RegisterPage() {
 
           {role === "PATIENT" && (
             <div>
-              <label className="mb-1.5 block text-md font-medium text-neutral-400">
+              <label className="mb-1.5 block text-md font-medium text-neutral-200">
                 Doctor&apos;s Email (Optional)
               </label>
               <input
@@ -172,7 +172,7 @@ export default function RegisterPage() {
           {role === "DOCTOR" && (
             <>
               <div>
-                <label className="mb-1.5 block text-md font-medium text-neutral-400">
+                <label className="mb-1.5 block text-md font-medium text-neutral-200">
                   Specialization
                 </label>
                 <input
@@ -184,7 +184,7 @@ export default function RegisterPage() {
                 />
               </div>
               <div>
-                <label className="mb-1.5 block text-md font-medium text-neutral-400">
+                <label className="mb-1.5 block text-md font-medium text-neutral-200">
                   Clinic Name
                 </label>
                 <input
