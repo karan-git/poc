@@ -33,7 +33,7 @@ export function Sidebar({
   const router = useRouter();
 
   const handleLogout = async () => {
-    await signOut({ callbackUrl: "/login" });
+    await signOut({ callbackUrl: window.location.origin + "/login" });
   };
 
   return (
@@ -93,7 +93,7 @@ export function Sidebar({
           </div>
           <button
             onClick={handleLogout}
-            className="shrink-0 rounded p-1.5 text-gray-400 hover:text-white hover:bg-white/5 transition-colors"
+            className="shrink-0 rounded p-1.5 text-gray-400 hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
             title="Sign out"
           >
             <LogOut size={16} />
