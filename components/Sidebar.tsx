@@ -33,7 +33,7 @@ export function Sidebar({
   const router = useRouter();
 
   const handleLogout = async () => {
-    await signOut({ callbackUrl: window.location.origin + "/login" });
+    await signOut({ callbackUrl: "/login" });
   };
 
   return (
