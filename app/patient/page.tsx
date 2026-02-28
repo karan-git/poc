@@ -3,6 +3,7 @@
 import { useChat } from "@ai-sdk/react";
 import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
+import { Loader2 } from "lucide-react";
 import { ChatLayout } from "@/components/ChatLayout";
 import { ChatMessages } from "@/components/ChatMessages";
 import { ChatInput } from "@/components/ChatInput";
@@ -32,12 +33,14 @@ export default function PatientPage() {
   const [sessions, setSessions] = useState<SessionEntry[]>([]);
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
   const [input, setInput] = useState("");
+  const [isCreatingSession, setIsCreatingSession] = useState(false);
+  const [isLoadingSession, setIsLoadingSession] = useState(false);
 
   const { messages, sendMessage, status, setMessages } = useChat({});
 
   // Fetch sessions
   const fetchSessions = useCallback(async () => {
-    const res = await fetch("/api/sessions");
+    const res = await fetch("/api/sessions", { cache: "no-store" });
     if (res.ok) {
       const data = await res.json();
       setSessions(data);
@@ -48,50 +51,55 @@ export default function PatientPage() {
     fetchSessions();
   }, [fetchSessions]);
 
-  // Load session messages when active session changes
-  useEffect(() => {
-    if (!activeSessionId) {
-      setMessages([]);
-      return;
-    }
-
-    const loadSession = async () => {
-      const res = await fetch(`/api/sessions/${activeSessionId}`);
-      if (res.ok) {
-        const data = await res.json();
-        // Convert DB messages to UIMessage format
-        const uiMessages = data.messages.map(
-          (m: {
-            id: string;
-            role: string;
-            content: string;
-            createdAt: string;
-          }) => ({
-            id: m.id,
-            role: m.role,
-            parts: [{ type: "text" as const, text: m.content }],
-            createdAt: new Date(m.createdAt),
-          }),
-        );
-        setMessages(uiMessages);
+  const loadSessionMessages = useCallback(
+    async (sessionId: string) => {
+      setIsLoadingSession(true);
+      try {
+        const res = await fetch(`/api/sessions/${sessionId}`);
+        if (res.ok) {
+          const data = await res.json();
+          // Convert DB messages to UIMessage format
+          const uiMessages = data.messages.map(
+            (m: {
+              id: string;
+              role: string;
+              content: string;
+              createdAt: string;
+            }) => ({
+              id: m.id,
+              role: m.role,
+              parts: [{ type: "text" as const, text: m.content }],
+              createdAt: new Date(m.createdAt),
+            }),
+          );
+          setMessages(uiMessages);
+        }
+      } finally {
+        setIsLoadingSession(false);
       }
-    };
-
-    loadSession();
-  }, [activeSessionId, setMessages]);
+    },
+    [setMessages],
+  );
 
   const handleNewSession = async () => {
-    const res = await fetch("/api/sessions", { method: "POST" });
-    if (res.ok) {
-      const newSession = await res.json();
-      setActiveSessionId(newSession.id);
-      setMessages([]);
-      await fetchSessions();
+    setIsCreatingSession(true);
+    try {
+      const res = await fetch("/api/sessions", { method: "POST" });
+      if (res.ok) {
+        const newSession = await res.json();
+        setActiveSessionId(newSession.id);
+        setMessages([]);
+        setSessions((prev) => [newSession, ...prev]);
+        await fetchSessions();
+      }
+    } finally {
+      setIsCreatingSession(false);
     }
   };
 
   const handleSelectSession = (id: string) => {
     setActiveSessionId(id);
+    loadSessionMessages(id);
   };
 
   // Refresh sessions after message is sent (to update titles)
@@ -115,31 +123,52 @@ export default function PatientPage() {
       onSelectSession={handleSelectSession}
       userName={authSession.user.name || "Patient"}
       userRole="PATIENT"
+      isCreatingSession={isCreatingSession}
     />
   ) : null;
 
   return (
     <ChatLayout sidebar={sidebar}>
-      <ChatMessages messages={allMessages} status={status} />
-      <ChatInput
-        input={input}
-        setInput={setInput}
-        sendMessage={(opts) => {
-          if (!activeSessionId) {
-            // Auto-create session on first message
-            fetch("/api/sessions", { method: "POST" })
-              .then((res) => res.json())
-              .then((newSession) => {
-                setActiveSessionId(newSession.id);
-                fetchSessions();
-                sendMessage(opts, { body: { sessionId: newSession.id } });
-              });
-          } else {
-            sendMessage(opts, { body: { sessionId: activeSessionId } });
-          }
-        }}
-        status={activeSessionId ? status : status}
-      />
+      {isLoadingSession ? (
+        <div className="flex-1 flex flex-col items-center justify-center space-y-4 animate-in fade-in duration-500">
+          <Loader2 className="w-10 h-10 text-blue-500 animate-spin" />
+          <p className="text-slate-400 text-sm font-medium">
+            Loading session history...
+          </p>
+        </div>
+      ) : (
+        <>
+          <ChatMessages messages={allMessages} status={status} />
+          <ChatInput
+            input={input}
+            setInput={setInput}
+            sendMessage={(opts) => {
+              if (!activeSessionId) {
+                // Auto-create session on first message
+                setIsCreatingSession(true);
+                fetch("/api/sessions", { method: "POST" })
+                  .then((res) => res.json())
+                  .then((newSession) => {
+                    setActiveSessionId(newSession.id);
+                    setSessions((prev) => [newSession, ...prev]);
+                    fetchSessions();
+                    sendMessage(opts, {
+                      body: { sessionId: newSession.id },
+                    });
+                  })
+                  .finally(() => {
+                    setIsCreatingSession(false);
+                  });
+              } else {
+                sendMessage(opts, {
+                  body: { sessionId: activeSessionId },
+                });
+              }
+            }}
+            status={isCreatingSession ? "submitting" : status}
+          />
+        </>
+      )}
     </ChatLayout>
   );
 }

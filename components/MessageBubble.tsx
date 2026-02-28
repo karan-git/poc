@@ -4,9 +4,10 @@ import { User, Bot } from "lucide-react";
 
 interface MessageBubbleProps {
   message: UIMessage;
+  id: string;
 }
 
-export function MessageBubble({ message }: MessageBubbleProps) {
+export function MessageBubble({ message, id }: MessageBubbleProps) {
   const isAssistant = message.role === "assistant";
 
   // Extract text from parts
@@ -25,25 +26,42 @@ export function MessageBubble({ message }: MessageBubbleProps) {
         isAssistant ? "justify-start" : "justify-start flex-row-reverse",
       )}
     >
-      {/* Avatar */}
-      <div
-        className={cn(
-          "flex h-8 w-8 shrink-0 items-center justify-center rounded-full",
-          isAssistant ? "bg-[#19c37d] text-white" : "bg-blue-600 text-white",
-        )}
-      >
-        {isAssistant ? <Bot size={16} /> : <User size={16} />}
-      </div>
+      {id == "greeting" ? (
+        <div className="flex w-full gap-4 py-4">
+          <div
+            className={cn(
+              "max-w-[100%] h-[70vh] flex justify-center items-center rounded-2xl px-4 py-3 text-sm md:text-base leading-relaxed whitespace-pre-wrap text-white",
+              isAssistant ? "pt-0" : "bg-[#303030]",
+            )}
+          >
+            {textContent}
+          </div>
+        </div>
+      ) : (
+        <>
+          {/* Avatar */}
+          <div
+            className={cn(
+              "flex h-8 w-8 shrink-0 items-center justify-center rounded-full",
+              isAssistant
+                ? "bg-[#19c37d] text-white"
+                : "bg-blue-600 text-white",
+            )}
+          >
+            {isAssistant ? <Bot size={16} /> : <User size={16} />}
+          </div>
 
-      {/* Message */}
-      <div
-        className={cn(
-          "max-w-[75%] rounded-2xl px-4 py-3 text-sm md:text-base leading-relaxed whitespace-pre-wrap text-white",
-          isAssistant ? "pt-0" : "bg-[#303030]",
-        )}
-      >
-        {textContent}
-      </div>
+          {/* Message */}
+          <div
+            className={cn(
+              "max-w-[75%] rounded-2xl py-3 text-sm md:text-base leading-relaxed whitespace-pre-wrap text-white",
+              isAssistant ? "pt-0" : "bg-[#303030] px-4",
+            )}
+          >
+            {textContent}
+          </div>
+        </>
+      )}
     </div>
   );
 }

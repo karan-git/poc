@@ -4,7 +4,14 @@ import React from "react";
 import { useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { cn } from "@/lib/utils";
-import { Plus, LogOut, Stethoscope, MessageSquare, Edit } from "lucide-react";
+import {
+  Plus,
+  LogOut,
+  Stethoscope,
+  MessageSquare,
+  Edit,
+  Loader2,
+} from "lucide-react";
 
 interface SessionEntry {
   id: string;
@@ -20,6 +27,7 @@ interface SidebarProps {
   onSelectSession: (id: string) => void;
   userName: string;
   userRole: string;
+  isCreatingSession?: boolean;
 }
 
 export function Sidebar({
@@ -29,6 +37,7 @@ export function Sidebar({
   onSelectSession,
   userName,
   userRole,
+  isCreatingSession,
 }: SidebarProps) {
   const router = useRouter();
 
@@ -42,15 +51,20 @@ export function Sidebar({
       <div className="p-3">
         <button
           onClick={onNewSession}
-          className="flex w-full items-center cursor-pointer gap-2 rounded-lg px-2 py-3 text-sm hover:bg-white/5 transition-colors"
+          disabled={isCreatingSession}
+          className="flex w-full items-center cursor-pointer gap-2 rounded-lg px-2 py-3 text-sm hover:bg-white/5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          <Edit size={16} />
-          New Chat
+          {isCreatingSession ? (
+            <Loader2 size={16} className="animate-spin" />
+          ) : (
+            <Edit size={16} />
+          )}
+          {isCreatingSession ? "Creating..." : "New Chat"}
         </button>
       </div>
 
       {/* Session List */}
-      <div className="flex-1 overflow-y-auto px-2 space-y-0.5">
+      <div className="flex-1 overflow-y-auto px-2 space-y-0.5 scrollbar-thin scrollbar-track-rounded-full scrollbar-track-border-1 scrollbar-thumb-rounded-full scrollbar-thumb-neutral-600 scrollbar-track-neutral-600">
         {sessions.map((s) => (
           <button
             key={s.id}

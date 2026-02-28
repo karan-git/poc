@@ -24,8 +24,8 @@ export function ChatMessages({ messages, status }: ChatMessagesProps) {
       className="flex-1 overflow-y-auto px-4 py-6 md:px-6 space-y-2 scroll-smooth"
     >
       <div className="max-w-3xl mx-auto space-y-4">
-        {messages.map((m) => (
-          <MessageBubble key={m.id} message={m} />
+        {messages.map((m, i) => (
+          <MessageBubble key={m.id} message={m} id={m.id} />
         ))}
         {status === "submitted" && (
           <div className="flex justify-start mb-4">
